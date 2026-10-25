@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 
 class GlassLoginWindow(QWidget):
     switch_to_signin = pyqtSignal()
+    switch_to_creditos = pyqtSignal() # Novo sinal para créditos
 
     def __init__(self):
         super().__init__()
@@ -21,8 +22,8 @@ class GlassLoginWindow(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         gradient = QLinearGradient(0, 0, self.width(), self.height())
-        gradient.setColorAt(0.0, QColor(79, 70, 229))  # Índigo vibrante
-        gradient.setColorAt(1.0, QColor(59, 130, 246)) # Azul brilhante
+        gradient.setColorAt(0.0, QColor(79, 70, 229))
+        gradient.setColorAt(1.0, QColor(59, 130, 246))
         painter.fillRect(self.rect(), gradient)
 
     def initUI(self):
@@ -30,7 +31,7 @@ class GlassLoginWindow(QWidget):
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         card = QWidget(self)
-        card.setFixedSize(460, 580)
+        card.setFixedSize(460, 600) # Levemente ajustado para o novo botão
         card.setObjectName("GlassCard")
         
         shadow = QGraphicsDropShadowEffect(self)
@@ -40,7 +41,7 @@ class GlassLoginWindow(QWidget):
         card.setGraphicsEffect(shadow)
 
         card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(40, 35, 40, 35)
+        card_layout.setContentsMargins(40, 30, 40, 30)
         card_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         title_label = QLabel("Bem Vindo")
@@ -51,14 +52,12 @@ class GlassLoginWindow(QWidget):
         subtitle_label.setObjectName("SubtitleLabel")
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Campo E-mail
         email_label = QLabel("Insira seu E-mail")
         email_label.setObjectName("FieldLabel")
         self.email_input = QLineEdit()
         self.email_input.setObjectName("InputField")
         self.email_input.setPlaceholderText("seu@email.com")
 
-        # Campo Senha
         senha_label = QLabel("Insira sua Senha")
         senha_label.setObjectName("FieldLabel")
         self.senha_input = QLineEdit()
@@ -69,6 +68,12 @@ class GlassLoginWindow(QWidget):
         self.btn_entrar = QPushButton("Entrar")
         self.btn_entrar.setObjectName("LoginButton")
         self.btn_entrar.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        # Botão de Créditos discreto
+        self.btn_creditos = QPushButton("Créditos")
+        self.btn_creditos.setObjectName("LinkButton")
+        self.btn_creditos.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_creditos.clicked.connect(self.switch_to_creditos.emit)
 
         footer_layout = QHBoxLayout()
         footer_label = QLabel("Não está cadastrado ainda?")
@@ -86,15 +91,17 @@ class GlassLoginWindow(QWidget):
 
         card_layout.addWidget(title_label)
         card_layout.addWidget(subtitle_label)
-        card_layout.addSpacing(10)
+        card_layout.addSpacing(8)
         card_layout.addWidget(email_label)
         card_layout.addWidget(self.email_input)
-        card_layout.addSpacing(8)
+        card_layout.addSpacing(6)
         card_layout.addWidget(senha_label)
         card_layout.addWidget(self.senha_input)
-        card_layout.addSpacing(18)
+        card_layout.addSpacing(14)
         card_layout.addWidget(self.btn_entrar)
-        card_layout.addSpacing(12)
+        card_layout.addSpacing(8)
+        card_layout.addWidget(self.btn_creditos, alignment=Qt.AlignmentFlag.AlignCenter)
+        card_layout.addSpacing(8)
         card_layout.addLayout(footer_layout)
 
         main_layout.addWidget(card)

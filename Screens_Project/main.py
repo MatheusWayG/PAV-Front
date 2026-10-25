@@ -2,26 +2,32 @@ import sys
 from PyQt6.QtWidgets import QApplication, QStackedWidget
 from login_screen import GlassLoginWindow
 from cadastro_screen import CadastroWindow
+from creditos_screen import CreditosWindow
 
 class MainWindow(QStackedWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Sistema - Login e Cadastro")
+        self.setWindowTitle("Sistema - Login, Cadastro e Créditos")
         self.showMaximized()
 
-        # Instancia as telas dos arquivos separados
+        # Instancia as telas
         self.login_screen = GlassLoginWindow()
         self.cadastro_screen = CadastroWindow()
+        self.creditos_screen = CreditosWindow()
 
-        # Adiciona ao container de páginas (Stacked Widget)
+        # Adiciona ao QStackedWidget (Índices: 0 = Login, 1 = Cadastro, 2 = Créditos)
         self.addWidget(self.login_screen)
         self.addWidget(self.cadastro_screen)
+        self.addWidget(self.creditos_screen)
 
-        # Conecta os sinais de navegação entre os arquivos
+        # Conecta as transições de navegação
         self.login_screen.switch_to_signin.connect(lambda: self.setCurrentIndex(1))
+        self.login_screen.switch_to_creditos.connect(lambda: self.setCurrentIndex(2))
+        
         self.cadastro_screen.switch_to_login.connect(lambda: self.setCurrentIndex(0))
+        self.creditos_screen.switch_to_login.connect(lambda: self.setCurrentIndex(0))
 
-        # Estilização global compartilhada para os efeitos Glassmorphism
+        # Estilização global compartilhada para os elementos de texto e cartões
         self.setStyleSheet("""
             QWidget#GlassCard {
                 background-color: rgba(255, 255, 255, 0.12);
@@ -40,11 +46,16 @@ class MainWindow(QStackedWidget):
                 font-family: 'Segoe UI', sans-serif;
                 margin-bottom: 5px;
             }
-            QLabel#FieldLabel {
+            QLabel#FieldLabel, QLabel#DevLabel {
                 color: rgba(255, 255, 255, 0.95);
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 600;
                 font-family: 'Segoe UI', sans-serif;
+            }
+            QLabel#DevLabel {
+                font-size: 16px;
+                font-weight: bold;
+                color: #ffffff;
             }
             QLineEdit#InputField {
                 background-color: rgba(255, 255, 255, 0.2);
@@ -64,7 +75,7 @@ class MainWindow(QStackedWidget):
             }
             QPushButton#LoginButton {
                 background-color: rgba(255, 255, 255, 0.9);
-                color: #4f46e5;
+                color: #065f46;
                 font-size: 14px;
                 font-weight: bold;
                 border-radius: 18px;
@@ -89,7 +100,7 @@ class MainWindow(QStackedWidget):
                 font-family: 'Segoe UI', sans-serif;
             }
             QPushButton#LinkButton:hover {
-                color: #e0e7ff;
+                color: #d1fae5;
             }
         """)
 
