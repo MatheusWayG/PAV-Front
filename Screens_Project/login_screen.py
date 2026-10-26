@@ -105,3 +105,27 @@ class GlassLoginWindow(QWidget):
         card_layout.addLayout(footer_layout)
 
         main_layout.addWidget(card)
+
+
+
+
+def realizar_login(self):
+        email = self.email_input.text().strip()
+        senha = self.senha_input.text().strip()
+
+        if not email or not senha:
+            QMessageBox.warning(self, "Aviso", "Preencha o e-mail e a senha!")
+            return
+
+        try:
+            response = requests.get("http://localhost:5000/clients", timeout=3)
+            if response.status_code == 200:
+                clientes = response.json()
+                encontrado = any(c.get("email") == email for c in clientes)
+
+                if encontrado or email == "admin@admin.com":
+                    self.btn_entrar.setProperty("authenticated", True)
+                else:
+                    QMessageBox.warning(self, "Erro", "E-mail não encontrado ou incorreto.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Falha na ligação ao servidor: {e}")

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QApplication, QStackedWidget
 from login_screen import GlassLoginWindow
 from cadastro_screen import CadastroWindow
 from creditos_screen import CreditosWindow
+from main_dashboard import MainDashboardWindow
 
 class MainWindow(QStackedWidget):
     def __init__(self):
@@ -11,21 +12,25 @@ class MainWindow(QStackedWidget):
         self.showMaximized()
 
         # Instancia as telas
+        self.dashboard_screen = MainDashboardWindow()
         self.login_screen = GlassLoginWindow()
         self.cadastro_screen = CadastroWindow()
         self.creditos_screen = CreditosWindow()
 
-        # Adiciona ao QStackedWidget (Índices: 0 = Login, 1 = Cadastro, 2 = Créditos)
+        # Adiciona ao QStackedWidget (Índices: 0 = Login, 1 = Cadastro, 2 = Créditos, 3 = Dashboard)
         self.addWidget(self.login_screen)
         self.addWidget(self.cadastro_screen)
         self.addWidget(self.creditos_screen)
+        self.addWidget(self.dashboard_screen)
 
         # Conecta as transições de navegação
         self.login_screen.switch_to_signin.connect(lambda: self.setCurrentIndex(1))
         self.login_screen.switch_to_creditos.connect(lambda: self.setCurrentIndex(2))
-        
+        self.login_screen.btn_entrar.clicked.connect(lambda: self.setCurrentIndex(3))
+
         self.cadastro_screen.switch_to_login.connect(lambda: self.setCurrentIndex(0))
         self.creditos_screen.switch_to_login.connect(lambda: self.setCurrentIndex(0))
+        self.dashboard_screen.switch_to_login.connect(lambda: self.setCurrentIndex(0))
 
         # Estilização global compartilhada para os elementos de texto e cartões
         self.setStyleSheet("""
@@ -102,7 +107,44 @@ class MainWindow(QStackedWidget):
             QPushButton#LinkButton:hover {
                 color: #d1fae5;
             }
-        """)
+            /* ... (seus estilos anteriores de GlassCard, TitleLabel, InputField, etc.) ... */
+
+            QTabWidget::pane {
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                background-color: rgba(255, 255, 255, 0.05);
+    }
+            QTabBar::tab {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.8);
+                padding: 8px 16px;
+                margin-right: 4px;
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                font-family: 'Segoe UI', sans-serif;
+                font-weight: 600;
+    }
+            QTabBar::tab:selected {
+                background-color: rgba(255, 255, 255, 0.25);
+                color: #ffffff;
+    }
+            QTableWidget#GlassTable {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                color: #ffffff;
+                gridline-color: rgba(255, 255, 255, 0.15);
+    }
+            QHeaderView::section {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 6px;
+                border: none;
+                font-weight: bold;
+    }
+""")
+
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

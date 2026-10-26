@@ -6,8 +6,10 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QWidget,
-    QGraphicsDropShadowEffect
+    QGraphicsDropShadowEffect,
+    QMessageBox
 )
+import requests
 
 class CadastroWindow(QWidget):
     switch_to_login = pyqtSignal()
@@ -29,7 +31,7 @@ class CadastroWindow(QWidget):
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         card = QWidget(self)
-        card.setFixedSize(460, 620)  # Cartão levemente maior para acomodar a idade
+        card.setFixedSize(460, 620)
         card.setObjectName("GlassCard")
 
         shadow = QGraphicsDropShadowEffect(self)
@@ -50,21 +52,18 @@ class CadastroWindow(QWidget):
         subtitle_label.setObjectName("SubtitleLabel")
         subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # Campo E-mail
         email_label = QLabel("Insira seu E-mail")
         email_label.setObjectName("FieldLabel")
         self.email_input = QLineEdit()
         self.email_input.setObjectName("InputField")
         self.email_input.setPlaceholderText("seu@email.com")
 
-        # Campo Idade
         idade_label = QLabel("Insira sua Idade")
         idade_label.setObjectName("FieldLabel")
         self.idade_input = QLineEdit()
         self.idade_input.setObjectName("InputField")
         self.idade_input.setPlaceholderText("Ex: 25")
 
-        # Campo Senha
         senha_label = QLabel("Insira sua Senha")
         senha_label.setObjectName("FieldLabel")
         self.senha_input = QLineEdit()
@@ -75,6 +74,7 @@ class CadastroWindow(QWidget):
         self.btn_cadastrar = QPushButton("Cadastrar")
         self.btn_cadastrar.setObjectName("LoginButton")
         self.btn_cadastrar.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_cadastrar.clicked.connect(self.realizar_cadastro)
 
         self.btn_voltar = QPushButton("Voltar ao Login")
         self.btn_voltar.setObjectName("LinkButton")
@@ -98,3 +98,36 @@ class CadastroWindow(QWidget):
         card_layout.addWidget(self.btn_voltar, alignment=Qt.AlignmentFlag.AlignCenter)
 
         main_layout.addWidget(card)
+
+    def realizar_cadastro(self):
+        email = self.email_input.text().strip()
+        idade = self.idade_input.text().strip()
+        senha = self.senha_input.text().strip()
+
+        if not email or not idade or not senha:
+            QMessageBox.warning(self, "Aviso", "Por favor, preencha todos os campos!")
+            return
+
+        try:
+            # Comunicação com a rota de clientes do backend Flask
+            url = "http://localhost:5000/clients"
+            payload = {
+                "email": email,
+                "age": int(idade) if idade.isdigit() else idade,
+                "password": senha
+            }
+            response = requests.post(url, json=payload, timeout=5)
+            
+            if response.status_code in [200, 201]:
+                QMessageBox.information(self, "Sucesso", "Cadastro realizado com sucesso!")
+                self.switch_to_login.emit()
+            else:
+                try:
+                    error_msg = response.json().get("error", "Erro ao cadastrar.")
+                except:
+                    error_msg = response.text
+                QMessageBox.critical(self, "Erro", f"Falha no cadastro: {error_msg}")
+        except requests.exceptions.ConnectionError:
+            QMessageBox.critical(self, "Erro de Conexão", "Não foi possível conectar ao servidor backend. Verifique se o Flask está rodando.")
+        except Exception as e:
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro inesperado: {str(e)}")
