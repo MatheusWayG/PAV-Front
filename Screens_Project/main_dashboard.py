@@ -281,7 +281,7 @@ def carregar_dados_backend(self):
         """Busca os dados do backend Flask e preenche as tabelas"""
         try:
             # 1. Carregar Clientes
-            res_clients = requests.get("http://localhost:5000/clients", timeout=3)
+            res_clients = requests.get("http://localhost:5432/clients", timeout=3)
             if res_clients.status_code == 200:
                 clientes = res_clients.json()
                 self.table_clients.setRowCount(len(clientes))
@@ -291,7 +291,7 @@ def carregar_dados_backend(self):
                     self.table_clients.setItem(row, 2, QTableWidgetItem(cli.get("cpf", "")))
 
             # 2. Carregar Transações
-            res_trans = requests.get("http://localhost:5000/transactions", timeout=3)
+            res_trans = requests.get("http://localhost:5432/transactions", timeout=3)
             if res_trans.status_code == 200:
                 transacoes = res_trans.json()
                 self.table_trans.setRowCount(len(transacoes))
@@ -302,7 +302,7 @@ def carregar_dados_backend(self):
                     self.table_trans.setItem(row, 3, QTableWidgetItem(str(tx.get("status", ""))))
 
             # 3. Carregar Alertas
-            res_alerts = requests.get("http://localhost:5000/alerts", timeout=3)
+            res_alerts = requests.get("http://localhost:5432/alerts", timeout=3)
             if res_alerts.status_code == 200:
                 alertas = res_alerts.json()
                 self.table_alerts.setRowCount(len(alertas))

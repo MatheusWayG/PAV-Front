@@ -118,7 +118,7 @@ def realizar_login(self):
             return
 
         try:
-            response = requests.get("http://localhost:5000/clients", timeout=3)
+            response = requests.get("http://localhost:5432/clients", timeout=3)
             if response.status_code == 200:
                 clientes = response.json()
                 encontrado = any(c.get("email") == email for c in clientes)
