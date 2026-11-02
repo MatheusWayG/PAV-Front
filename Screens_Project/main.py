@@ -186,7 +186,7 @@ class MainWindow(QStackedWidget):
                 font-size: 12px;
             }
             QTableWidget#GlassTable::item {
-                padding: 6px;
+                padding: 4px 6px;
             }
             QHeaderView::section {
                 background-color: rgba(30, 41, 59, 0.85);

@@ -32,7 +32,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from client_api import api
-from utils import CpfValidator, format_currency, format_datetime
+from utils import CpfValidator, format_currency, format_datetime, criar_botao_acao
 
 
 # ============================================================================
@@ -734,15 +734,15 @@ class MainDashboardWindow(QWidget):
         title_box.addWidget(self.user_chip)
 
         actions_box = QHBoxLayout()
-        actions_box.setSpacing(10)
+        actions_box.setSpacing(8)
 
-        self.btn_refresh = QPushButton("🔄 Recarregar Dados")
+        self.btn_refresh = QPushButton("🔄 Recarregar")
         self.btn_refresh.setObjectName("LoginButton")
         self.btn_refresh.setFixedHeight(34)
         self.btn_refresh.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_refresh.clicked.connect(self.carregar_dados_backend)
 
-        self.btn_perfil = QPushButton("👤 Meu Perfil")
+        self.btn_perfil = QPushButton("👤 Perfil")
         self.btn_perfil.setObjectName("LoginButton")
         self.btn_perfil.setFixedHeight(34)
         self.btn_perfil.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -754,7 +754,7 @@ class MainDashboardWindow(QWidget):
         self.btn_settings.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_settings.clicked.connect(self.switch_to_settings.emit)
 
-        self.btn_logout = QPushButton("🚪 Sair / Logout")
+        self.btn_logout = QPushButton("🚪 Sair")
         self.btn_logout.setObjectName("LinkButton")
         self.btn_logout.setFixedHeight(34)
         self.btn_logout.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -841,6 +841,15 @@ class MainDashboardWindow(QWidget):
             "ID", "Nome", "CPF", "Renda Mensal", "Cidade Habitual", "Horário Habitual", "Status", "Ações"
         ])
         self.table_clients.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.table_clients.verticalHeader().setDefaultSectionSize(44)
+        self.table_clients.verticalHeader().setVisible(False)
+        self.table_clients.setColumnWidth(0, 45)
+        self.table_clients.setColumnWidth(2, 115)
+        self.table_clients.setColumnWidth(3, 105)
+        self.table_clients.setColumnWidth(4, 115)
+        self.table_clients.setColumnWidth(5, 110)
+        self.table_clients.setColumnWidth(6, 75)
+        self.table_clients.setColumnWidth(7, 225)
 
         layout.addLayout(header)
         layout.addSpacing(8)
@@ -932,6 +941,17 @@ class MainDashboardWindow(QWidget):
             "ID", "Cliente ID", "Valor", "Tipo", "Destino", "Localidade", "Data/Hora", "Score de Risco", "Classificação", "Ações"
         ])
         self.table_trans.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+        self.table_trans.verticalHeader().setDefaultSectionSize(44)
+        self.table_trans.verticalHeader().setVisible(False)
+        self.table_trans.setColumnWidth(0, 45)
+        self.table_trans.setColumnWidth(1, 70)
+        self.table_trans.setColumnWidth(2, 100)
+        self.table_trans.setColumnWidth(3, 80)
+        self.table_trans.setColumnWidth(5, 110)
+        self.table_trans.setColumnWidth(6, 125)
+        self.table_trans.setColumnWidth(7, 75)
+        self.table_trans.setColumnWidth(8, 100)
+        self.table_trans.setColumnWidth(9, 180)
 
         layout.addLayout(header)
         layout.addSpacing(8)
@@ -992,6 +1012,15 @@ class MainDashboardWindow(QWidget):
             "ID", "Código", "Nome da Regra", "Peso (Pontos)", "Limite (Threshold)", "Janela (min)", "Status", "Ações"
         ])
         self.table_rules.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        self.table_rules.verticalHeader().setDefaultSectionSize(44)
+        self.table_rules.verticalHeader().setVisible(False)
+        self.table_rules.setColumnWidth(0, 45)
+        self.table_rules.setColumnWidth(1, 140)
+        self.table_rules.setColumnWidth(3, 80)
+        self.table_rules.setColumnWidth(4, 80)
+        self.table_rules.setColumnWidth(5, 80)
+        self.table_rules.setColumnWidth(6, 75)
+        self.table_rules.setColumnWidth(7, 225)
 
         layout.addLayout(header)
         layout.addSpacing(8)
@@ -1060,6 +1089,13 @@ class MainDashboardWindow(QWidget):
             "ID", "Transação ID", "Regra", "Pontos", "Motivo da Detecção", "Data/Hora"
         ])
         self.table_alerts.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+        self.table_alerts.verticalHeader().setDefaultSectionSize(44)
+        self.table_alerts.verticalHeader().setVisible(False)
+        self.table_alerts.setColumnWidth(0, 50)
+        self.table_alerts.setColumnWidth(1, 95)
+        self.table_alerts.setColumnWidth(2, 160)
+        self.table_alerts.setColumnWidth(3, 80)
+        self.table_alerts.setColumnWidth(5, 130)
 
         layout.addLayout(header)
         layout.addSpacing(8)
@@ -1102,21 +1138,17 @@ class MainDashboardWindow(QWidget):
             # Ações
             actions_widget = QWidget()
             act_layout = QHBoxLayout(actions_widget)
-            act_layout.setContentsMargins(4, 2, 4, 2)
+            act_layout.setContentsMargins(6, 2, 6, 2)
             act_layout.setSpacing(6)
+            act_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            btn_edit = QPushButton("Editar")
-            btn_edit.setObjectName("LinkButton")
-            btn_edit.clicked.connect(lambda _, c=cli: self.abrir_dialogo_editar_cliente(c))
-
-            btn_toggle = QPushButton("Desativar" if ativo else "Ativar")
-            btn_toggle.setObjectName("LinkButton")
-            btn_toggle.clicked.connect(lambda _, c=cli: self.alternar_status_cliente(c))
-
-            btn_del = QPushButton("Excluir")
-            btn_del.setObjectName("LinkButton")
-            btn_del.setStyleSheet("color: #f87171;")
-            btn_del.clicked.connect(lambda _, c=cli: self.excluir_cliente(c))
+            btn_edit = criar_botao_acao("Editar", "blue", lambda _, c=cli: self.abrir_dialogo_editar_cliente(c))
+            btn_toggle = criar_botao_acao(
+                "Desativar" if ativo else "Ativar",
+                "amber" if ativo else "green",
+                lambda _, c=cli: self.alternar_status_cliente(c)
+            )
+            btn_del = criar_botao_acao("Excluir", "red", lambda _, c=cli: self.excluir_cliente(c))
 
             act_layout.addWidget(btn_edit)
             act_layout.addWidget(btn_toggle)
@@ -1165,17 +1197,12 @@ class MainDashboardWindow(QWidget):
             # Ações
             actions_widget = QWidget()
             act_layout = QHBoxLayout(actions_widget)
-            act_layout.setContentsMargins(4, 2, 4, 2)
+            act_layout.setContentsMargins(6, 2, 6, 2)
             act_layout.setSpacing(6)
+            act_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            btn_alerts = QPushButton("Ver Alertas")
-            btn_alerts.setObjectName("LinkButton")
-            btn_alerts.clicked.connect(lambda _, t=tx: self.ver_detalhes_transacao(t))
-
-            btn_del = QPushButton("Excluir")
-            btn_del.setObjectName("LinkButton")
-            btn_del.setStyleSheet("color: #f87171;")
-            btn_del.clicked.connect(lambda _, t=tx: self.excluir_transacao(t))
+            btn_alerts = criar_botao_acao("Ver Alertas", "purple", lambda _, t=tx: self.ver_detalhes_transacao(t))
+            btn_del = criar_botao_acao("Excluir", "red", lambda _, t=tx: self.excluir_transacao(t))
 
             act_layout.addWidget(btn_alerts)
             act_layout.addWidget(btn_del)
@@ -1208,21 +1235,17 @@ class MainDashboardWindow(QWidget):
             # Ações
             actions_widget = QWidget()
             act_layout = QHBoxLayout(actions_widget)
-            act_layout.setContentsMargins(4, 2, 4, 2)
+            act_layout.setContentsMargins(6, 2, 6, 2)
             act_layout.setSpacing(6)
+            act_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            btn_edit = QPushButton("Editar")
-            btn_edit.setObjectName("LinkButton")
-            btn_edit.clicked.connect(lambda _, reg=r: self.abrir_dialogo_editar_regra(reg))
-
-            btn_toggle = QPushButton("Desativar" if ativo else "Ativar")
-            btn_toggle.setObjectName("LinkButton")
-            btn_toggle.clicked.connect(lambda _, reg=r: self.alternar_status_regra(reg))
-
-            btn_del = QPushButton("Excluir")
-            btn_del.setObjectName("LinkButton")
-            btn_del.setStyleSheet("color: #f87171;")
-            btn_del.clicked.connect(lambda _, reg=r: self.excluir_regra(reg))
+            btn_edit = criar_botao_acao("Editar", "blue", lambda _, reg=r: self.abrir_dialogo_editar_regra(reg))
+            btn_toggle = criar_botao_acao(
+                "Desativar" if ativo else "Ativar",
+                "amber" if ativo else "green",
+                lambda _, reg=r: self.alternar_status_regra(reg)
+            )
+            btn_del = criar_botao_acao("Excluir", "red", lambda _, reg=r: self.excluir_regra(reg))
 
             act_layout.addWidget(btn_edit)
             act_layout.addWidget(btn_toggle)

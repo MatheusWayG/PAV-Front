@@ -27,7 +27,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from client_api import api
-from utils import format_currency, format_datetime
+from utils import format_currency, format_datetime, criar_botao_acao
 
 
 class TransactionWindow(QWidget):
@@ -139,6 +139,15 @@ class TransactionWindow(QWidget):
             "ID", "Cliente ID", "Valor", "Tipo", "Destino", "Score", "Classificação", "Ações"
         ])
         self.table_hist.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+        self.table_hist.verticalHeader().setDefaultSectionSize(44)
+        self.table_hist.verticalHeader().setVisible(False)
+        self.table_hist.setColumnWidth(0, 50)
+        self.table_hist.setColumnWidth(1, 75)
+        self.table_hist.setColumnWidth(2, 110)
+        self.table_hist.setColumnWidth(3, 85)
+        self.table_hist.setColumnWidth(5, 85)
+        self.table_hist.setColumnWidth(6, 110)
+        self.table_hist.setColumnWidth(7, 140)
 
         card_layout.addLayout(top)
         card_layout.addSpacing(10)
@@ -235,9 +244,7 @@ class TransactionWindow(QWidget):
                 score_item.setForeground(QColor("#10b981"))
             self.table_hist.setItem(row, 6, class_item)
 
-            btn = QPushButton("Ver Auditoria")
-            btn.setObjectName("LinkButton")
-            btn.clicked.connect(lambda _, t=tx: self._mostrar_auditoria(t))
+            btn = criar_botao_acao("Ver Auditoria", "purple", lambda _, t=tx: self._mostrar_auditoria(t))
             self.table_hist.setCellWidget(row, 7, btn)
 
     def _mostrar_auditoria(self, tx):

@@ -21,7 +21,7 @@ if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
 
 from client_api import api
-from utils import format_currency, format_datetime
+from utils import format_currency, format_datetime, criar_botao_acao
 
 
 class AnomaliesWindow(QWidget):
@@ -97,6 +97,15 @@ class AnomaliesWindow(QWidget):
             "ID Tx", "Cliente ID", "Valor", "Tipo", "Destino", "Score de Risco", "Classificação", "Ações"
         ])
         self.table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
+        self.table.verticalHeader().setDefaultSectionSize(44)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setColumnWidth(0, 50)
+        self.table.setColumnWidth(1, 75)
+        self.table.setColumnWidth(2, 110)
+        self.table.setColumnWidth(3, 85)
+        self.table.setColumnWidth(5, 85)
+        self.table.setColumnWidth(6, 110)
+        self.table.setColumnWidth(7, 140)
 
         card_layout.addLayout(top)
         card_layout.addSpacing(15)
@@ -159,9 +168,7 @@ class AnomaliesWindow(QWidget):
                 score_item.setForeground(QColor("#f59e0b"))
             self.table.setItem(row, 6, class_item)
 
-            btn = QPushButton("Ver Auditoria")
-            btn.setObjectName("LinkButton")
-            btn.clicked.connect(lambda _, t=tx: self._mostrar_auditoria(t))
+            btn = criar_botao_acao("Ver Auditoria", "purple", lambda _, t=tx: self._mostrar_auditoria(t))
             self.table.setCellWidget(row, 7, btn)
 
     def _mostrar_auditoria(self, tx):

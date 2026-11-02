@@ -1,6 +1,8 @@
 import re
 from datetime import datetime
-from typing import Optional
+from typing import Callable, Optional
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QPushButton
 
 class CpfValidator:
     """Validador e formatador de CPF em conformidade estrita com o backend."""
@@ -58,9 +60,47 @@ def format_datetime(iso_str: Optional[str]) -> str:
     if not iso_str:
         return "-"
     try:
-        # Trata formato ISO (ex: 2026-11-01T14:30:00)
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
         return dt.strftime("%d/%m/%Y %H:%M")
     except Exception:
         return str(iso_str)
 
+
+def criar_botao_acao(texto: str, cor_tipo: str, callback: Optional[Callable] = None) -> QPushButton:
+    """Cria botões de ação estilizados e nítidos para uso nas células de tabelas."""
+    btn = QPushButton(texto)
+    btn.setFixedHeight(28)
+    btn.setCursor(Qt.CursorShape.PointingHandCursor)
+
+    cores = {
+        "blue": ("rgba(56, 189, 248, 0.22)", "rgba(56, 189, 248, 0.65)", "#38bdf8"),
+        "amber": ("rgba(245, 158, 11, 0.22)", "rgba(245, 158, 11, 0.65)", "#fbbf24"),
+        "green": ("rgba(16, 185, 129, 0.22)", "rgba(16, 185, 129, 0.65)", "#34d399"),
+        "red": ("rgba(239, 68, 68, 0.22)", "rgba(239, 68, 68, 0.65)", "#f87171"),
+        "purple": ("rgba(168, 85, 247, 0.22)", "rgba(168, 85, 247, 0.65)", "#c084fc"),
+    }
+    bg, border, text_color = cores.get(cor_tipo, cores["blue"])
+
+    btn.setStyleSheet(f"""
+        QPushButton {{
+            background-color: {bg};
+            border: 1px solid {border};
+            border-radius: 6px;
+            color: {text_color};
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 9px;
+            font-family: 'Segoe UI', sans-serif;
+            text-decoration: none;
+        }}
+        QPushButton:hover {{
+            background-color: {border};
+            color: #ffffff;
+        }}
+        QPushButton:pressed {{
+            background-color: {bg};
+        }}
+    """)
+    if callback:
+        btn.clicked.connect(callback)
+    return btn
